@@ -220,3 +220,19 @@ elif menu == "Evaluasi":
 
     with col2:
         st.metric(label="MAPE", value=f"{mape:.2f}%")
+
+    st.markdown("---")
+
+    st.write("""
+    **Penjelasan Evaluasi Model:**
+
+    - **RMSE (Root Mean Squared Error)** adalah ukuran seberapa besar rata-rata kesalahan prediksi model dibandingkan dengan nilai sebenarnya. 
+    Nilai RMSE ditampilkan dalam satuan yang sama dengan data (misalnya rupiah). 
+    Semakin kecil nilai RMSE, maka semakin akurat model dalam melakukan peramalan.
+
+    - **MAPE (Mean Absolute Percentage Error)** adalah ukuran kesalahan dalam bentuk persentase. 
+    MAPE menunjukkan seberapa besar rata-rata kesalahan prediksi dibandingkan nilai sebenarnya dalam persen.
+    Semakin kecil nilai MAPE, maka model semakin baik karena tingkat kesalahannya rendah.
+
+    Secara umum, model dikatakan baik apabila nilai RMSE dan MAPE yang dihasilkan relatif kecil.
+    """)
