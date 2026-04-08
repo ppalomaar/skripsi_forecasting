@@ -91,34 +91,35 @@ forecast = forecast.set_index("Tanggal")
 # ======================
 if menu == "Home":
 
-    st.title("Dashboard Peramalan Nilai Tukar Rupiah")
+    st.title("Dashboard Peramalan Nilai Tukar Rupiah Oktober - Desember 2025")
 
     st.markdown("""
-    ### 📌 Latar Belakang
-    Nilai tukar Rupiah terhadap Dollar Amerika Serikat merupakan indikator penting dalam perekonomian Indonesia. 
-    Perubahan nilai tukar dipengaruhi oleh berbagai faktor, salah satunya adalah harga minyak mentah dunia.
+### 📌 Gambaran Umum
+Platform ini menyediakan layanan analisis dan proyeksi nilai tukar Rupiah terhadap Dollar Amerika Serikat sebagai bagian dari dukungan pengambilan keputusan berbasis data. 
+Pergerakan nilai tukar memiliki dampak langsung terhadap aktivitas perdagangan, investasi, serta stabilitas ekonomi, sehingga diperlukan alat analisis yang mampu memberikan estimasi yang akurat dan terukur.
 
-    ### 🎯 Tujuan
-    Dashboard ini bertujuan untuk melakukan analisis dan peramalan nilai tukar Rupiah menggunakan metode ARIMAX.
+### 🎯 Tujuan Layanan
+Dashboard ini dirancang untuk memberikan insight prediktif terkait pergerakan nilai tukar Rupiah pada Bulan September hingga Desember 2025 
+guna mendukung pelaku usaha dan pemangku kebijakan dalam melakukan perencanaan, mitigasi risiko, serta penyusunan strategi ekonomi.
 
-    ### ⚙️ Metode
-    Metode yang digunakan adalah **ARIMAX (AutoRegressive Integrated Moving Average with Exogenous Variable)**, 
-    yaitu metode peramalan deret waktu yang menggunakan variabel eksternal.
+### ⚙️ Pendekatan Analitis
+Peramalan dilakukan menggunakan model **ARIMAX (AutoRegressive Integrated Moving Average with Exogenous Variable)** yang mengintegrasikan data historis nilai tukar dengan variabel eksternal berupa harga minyak mentah dunia, 
+sebagai salah satu indikator global yang mempengaruhi dinamika ekonomi.
 
-    ### 📊 Data
-    - Nilai Tukar Rupiah terhadap USD  
-    - Harga Minyak Mentah Dunia  
+### 📊 Cakupan Data
+Analisis didasarkan pada:
+- Data historis nilai tukar Rupiah terhadap USD  
+- Data harga minyak mentah dunia sebagai variabel eksternal  
 
-    ### 📈 Fitur Dashboard
-    - Visualisasi nilai tukar  
-    - Visualisasi harga minyak  
-    - Hasil forecast  
-    - Evaluasi model (RMSE & MAPE)  
+### 📈 Fitur Layanan
+- Visualisasi pergerakan nilai tukar Rupiah terhadap USD selama periode Januari hingga Desember 2025  
+- Visualisasi tren harga minyak mentah dunia pada periode yang sama sebagai indikator eksternal  
+- Proyeksi nilai tukar Rupiah dalam horizon mingguan (7 hari)  
+- Perbandingan antara nilai aktual dan hasil proyeksi untuk memantau kinerja model  
 
-    ### 💡 Kesimpulan
-    Model ARIMAX digunakan untuk memprediksi nilai tukar berdasarkan pola historis. 
-    Meskipun tidak semua asumsi terpenuhi, model tetap layak digunakan karena memiliki tingkat akurasi yang baik.
-    """)
+### 💡 Nilai Tambah
+Informasi yang dihasilkan dapat dimanfaatkan sebagai dasar pertimbangan dalam pengambilan keputusan strategis, baik dalam konteks bisnis maupun kebijakan publik. Pendekatan berbasis data ini diharapkan mampu memberikan gambaran yang lebih objektif terhadap potensi pergerakan nilai tukar di masa depan.
+""")
 
 # ======================
 # MENU NILAI TUKAR
