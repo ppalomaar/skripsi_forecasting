@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
+# ======================
+# CONFIG
+# ======================
 st.set_page_config(
     page_title="Dashboard Forecast Nilai Tukar Oktober - Desember 2025",
     layout="wide"
@@ -29,27 +32,12 @@ st.sidebar.markdown(
 )
 
 # ======================
-# MENU SIDEBAR BUTTON
+# MENU SIDEBAR
 # ======================
-if "menu" not in st.session_state:
-    st.session_state.menu = "Home"
-
-if st.sidebar.button("Home"):
-    st.session_state.menu = "Home"
-
-if st.sidebar.button("Nilai Tukar Rupiah"):
-    st.session_state.menu = "Nilai Tukar Rupiah"
-
-if st.sidebar.button("Harga Minyak Mentah"):
-    st.session_state.menu = "Harga Minyak Mentah"
-
-if st.sidebar.button("Forecast"):
-    st.session_state.menu = "Forecast"
-
-if st.sidebar.button("Evaluasi"):
-    st.session_state.menu = "Evaluasi"
-
-menu = st.session_state.menu
+menu = st.sidebar.radio(
+    "Menu",
+    ["Home", "Nilai Tukar Rupiah", "Harga Minyak Mentah", "Forecast", "Evaluasi"]
+)
 
 # ======================
 # LOAD DATA
@@ -67,144 +55,131 @@ forecast['Tanggal'] = pd.to_datetime(forecast['Tanggal'])
 
 minyak = minyak.rename(columns={
     'Date': 'Tanggal',
-    'Price': 'Harga',
-    'Open': 'Buka',
-    'High': 'Tertinggi',
-    'Low': 'Terendah',
-    'Vol.': 'Volume',
-    'Change %': 'Perubahan (%)'
+    'Price': 'Harga'
 })
 
 kurs['Terakhir'] = kurs['Terakhir'].astype(str).str.replace(',', '').astype(float)
 minyak['Harga'] = minyak['Harga'].astype(str).str.replace(',', '').astype(float)
 
-kurs = kurs.sort_values("Tanggal")
-minyak = minyak.sort_values("Tanggal")
-forecast = forecast.sort_values("Tanggal")
-
-kurs = kurs.set_index("Tanggal")
-minyak = minyak.set_index("Tanggal")
-forecast = forecast.set_index("Tanggal")
+kurs = kurs.sort_values("Tanggal").set_index("Tanggal")
+minyak = minyak.sort_values("Tanggal").set_index("Tanggal")
+forecast = forecast.sort_values("Tanggal").set_index("Tanggal")
 
 # ======================
-# MENU HOME (LANDING PAGE)
+# MENU HOME
 # ======================
 if menu == "Home":
 
     st.title("Dashboard Peramalan Nilai Tukar Rupiah Oktober - Desember 2025")
 
-    st.markdown("""
-### 📌 Gambaran Umum
-Platform ini menyediakan layanan analisis dan proyeksi nilai tukar Rupiah terhadap Dollar Amerika Serikat sebagai bagian dari dukungan pengambilan keputusan berbasis data. 
-Pergerakan nilai tukar memiliki dampak langsung terhadap aktivitas perdagangan, investasi, serta stabilitas ekonomi, sehingga diperlukan alat analisis yang mampu memberikan estimasi yang akurat dan terukur.
-
-### 🎯 Tujuan Layanan
-Dashboard ini dirancang untuk memberikan insight prediktif terkait pergerakan nilai tukar Rupiah pada Bulan September hingga Desember 2025 
-guna mendukung pelaku usaha dan pemangku kebijakan dalam melakukan perencanaan, mitigasi risiko, serta penyusunan strategi ekonomi.
-
-### ⚙️ Pendekatan Analitis
-Peramalan dilakukan menggunakan model **ARIMAX (AutoRegressive Integrated Moving Average with Exogenous Variable)** yang mengintegrasikan data historis nilai tukar dengan variabel eksternal berupa harga minyak mentah dunia, 
-sebagai salah satu indikator global yang mempengaruhi dinamika ekonomi.
-
-### 📊 Cakupan Data
-Analisis didasarkan pada:
-- Data historis nilai tukar Rupiah terhadap USD  
-- Data harga minyak mentah dunia sebagai variabel eksternal  
-
-### 📈 Fitur Layanan
-- Visualisasi pergerakan nilai tukar Rupiah terhadap USD selama periode Januari hingga Desember 2025  
-- Visualisasi tren harga minyak mentah dunia pada periode yang sama sebagai indikator eksternal  
-- Proyeksi nilai tukar Rupiah dalam horizon mingguan (7 hari)  
-- Perbandingan antara nilai aktual dan hasil proyeksi untuk memantau kinerja model  
-
-### 💡 Nilai Tambah
-Informasi yang dihasilkan dapat dimanfaatkan sebagai dasar pertimbangan dalam pengambilan keputusan strategis, baik dalam konteks bisnis maupun kebijakan publik. Pendekatan berbasis data ini diharapkan mampu memberikan gambaran yang lebih objektif terhadap potensi pergerakan nilai tukar di masa depan.
-""")
+    st.write("""
+    Dashboard ini menampilkan analisis dan peramalan nilai tukar Rupiah terhadap USD 
+    menggunakan model ARIMAX dengan variabel eksternal harga minyak mentah dunia.
+    """)
 
 # ======================
-# MENU NILAI TUKAR
+# NILAI TUKAR
 # ======================
 elif menu == "Nilai Tukar Rupiah":
 
     st.subheader("Grafik Nilai Tukar Rupiah")
 
-    fig, ax = plt.subplots(figsize=(14,6))
-    ax.plot(kurs.index, kurs['Terakhir'], linewidth=2, label="Nilai Tukar Rupiah")
+    fig = go.Figure()
 
-    ax.set_title("Pergerakan Nilai Tukar Rupiah")
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Nilai Tukar (Rp/USD)")
+    fig.add_trace(go.Scatter(
+        x=kurs.index,
+        y=kurs['Terakhir'],
+        mode='lines',
+        name='Nilai Tukar',
+        line=dict(width=2)
+    ))
 
-    ax.grid(True, linestyle="--", alpha=0.3)
-    plt.xticks(rotation=45)
+    fig.update_layout(
+        title="Pergerakan Nilai Tukar Rupiah",
+        xaxis_title="Tanggal",
+        yaxis_title="Nilai Tukar (Rp/USD)",
+        template="plotly_white",
+        hovermode="x unified"
+    )
 
-    ax.legend()
-    st.pyplot(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 # ======================
-# MENU MINYAK
+# HARGA MINYAK
 # ======================
 elif menu == "Harga Minyak Mentah":
 
     st.subheader("Grafik Harga Minyak Mentah")
 
-    fig, ax = plt.subplots(figsize=(14,6))
-    ax.plot(minyak.index, minyak['Harga'], linewidth=2, label="Harga Minyak Mentah")
+    fig = go.Figure()
 
-    ax.set_title("Pergerakan Harga Minyak Mentah Dunia")
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Harga")
+    fig.add_trace(go.Scatter(
+        x=minyak.index,
+        y=minyak['Harga'],
+        mode='lines',
+        name='Harga Minyak',
+        line=dict(width=2)
+    ))
 
-    ax.grid(True, linestyle="--", alpha=0.3)
-    plt.xticks(rotation=45)
+    fig.update_layout(
+        title="Pergerakan Harga Minyak Mentah Dunia",
+        xaxis_title="Tanggal",
+        yaxis_title="Harga",
+        template="plotly_white",
+        hovermode="x unified"
+    )
 
-    ax.legend()
-    st.pyplot(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 # ======================
-# MENU FORECAST
+# FORECAST
 # ======================
 elif menu == "Forecast":
 
-    st.subheader("Grafik Forecast Per Minggu")
+    st.subheader("Perbandingan Actual vs Forecast")
 
-    fig, ax = plt.subplots(figsize=(14,6))
-    ax.plot(forecast.index, forecast['Forecast_ARIMAX'], linewidth=2, marker='o', label="Forecast")
+    fig = go.Figure()
 
-    ax.set_title("Forecast Nilai Tukar Per Minggu")
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Nilai Tukar")
+    # Actual
+    fig.add_trace(go.Scatter(
+        x=forecast.index,
+        y=forecast['Actual'],
+        mode='lines+markers',
+        name='Actual',
+        line=dict(width=2)
+    ))
 
-    ax.grid(True, linestyle="--", alpha=0.3)
-    plt.xticks(rotation=45)
+    # Forecast
+    fig.add_trace(go.Scatter(
+        x=forecast.index,
+        y=forecast['Forecast_ARIMAX'],
+        mode='lines',
+        name='Forecast',
+        line=dict(dash='dash', width=2)
+    ))
 
-    ax.legend()
-    st.pyplot(fig)
+    fig.update_layout(
+        title="Perbandingan Nilai Aktual dan Forecast",
+        xaxis_title="Tanggal",
+        yaxis_title="Nilai Tukar",
+        template="plotly_white",
+        hovermode="x unified",
+        xaxis=dict(rangeslider=dict(visible=True))  # slider bawah
+    )
 
-    st.subheader("Grafik Keseluruhan Actual vs Forecast")
+    st.plotly_chart(fig, use_container_width=True)
 
-    fig2, ax2 = plt.subplots(figsize=(14,6))
-    ax2.plot(forecast.index, forecast['Actual'], linewidth=2, label="Actual")
-    ax2.plot(forecast.index, forecast['Forecast_ARIMAX'], linewidth=2, linestyle='--', label="Forecast")
-
-    ax2.set_title("Perbandingan Actual vs Forecast")
-    ax2.set_xlabel("Tanggal")
-    ax2.set_ylabel("Nilai Tukar")
-
-    ax2.grid(True, linestyle="--", alpha=0.3)
-    plt.xticks(rotation=45)
-
-    ax2.legend()
-    st.pyplot(fig2)
-
-    st.subheader("Tabel Nilai Real (Actual)")
+    st.subheader("Tabel Nilai Actual")
     st.dataframe(forecast[['Actual']], use_container_width=True)
 
     st.subheader("Tabel Hasil Forecast")
-    st.dataframe(forecast[['Forecast_ARIMAX']].style.format("{:.0f}"), use_container_width=True)
+    st.dataframe(
+        forecast[['Forecast_ARIMAX']].style.format("{:.0f}"),
+        use_container_width=True
+    )
 
 # ======================
-# MENU EVALUASI
+# EVALUASI
 # ======================
 elif menu == "Evaluasi":
 
@@ -224,15 +199,9 @@ elif menu == "Evaluasi":
     st.markdown("---")
 
     st.write("""
-    **Penjelasan Evaluasi Model:**
+    **Penjelasan:**
 
-    - **RMSE (Root Mean Squared Error)** adalah ukuran seberapa besar rata-rata kesalahan prediksi model dibandingkan dengan nilai sebenarnya. 
-    Nilai RMSE ditampilkan dalam satuan yang sama dengan data (misalnya rupiah). 
-    Semakin kecil nilai RMSE, maka semakin akurat model dalam melakukan peramalan.
-
-    - **MAPE (Mean Absolute Percentage Error)** adalah ukuran kesalahan dalam bentuk persentase. 
-    MAPE menunjukkan seberapa besar rata-rata kesalahan prediksi dibandingkan nilai sebenarnya dalam persen.
-    Semakin kecil nilai MAPE, maka model semakin baik karena tingkat kesalahannya rendah.
-
-    Secara umum, model dikatakan baik apabila nilai RMSE dan MAPE yang dihasilkan relatif kecil.
+    - RMSE menunjukkan besar rata-rata error dalam satuan asli (rupiah).
+    - MAPE menunjukkan besar error dalam persen.
+    Semakin kecil nilainya, semakin baik model.
     """)
